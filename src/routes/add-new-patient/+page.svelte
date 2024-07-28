@@ -1,3 +1,113 @@
+<script lang="ts">
+  import { region } from "$lib/data/region";
+
+  type Patient = {
+    name: string;
+    tempatLahir: string;
+    dob: string;
+    province: string;
+    city: string;
+    district: string;
+    village: string;
+    address: string;
+    familyRelationship: string;
+    familyName: string;
+  };
+
+  let patientData: Patient = {
+    name: "",
+    tempatLahir: "",
+    dob: "",
+    province: "Choose option...",
+    city: "Choose option...",
+    district: "Choose option...",
+    village: "Choose option...",
+    address: "",
+    familyRelationship: "Choose option...",
+    familyName: "",
+  };
+
+  let sameAsKtp: boolean = false;
+
+  let oriDomisiliAddress = {
+    province: "Choose option...",
+    city: "Choose option...",
+    district: "Choose option...",
+    village: "Choose option...",
+    address: "",
+  };
+
+  let domisiliAddress = { ...oriDomisiliAddress };
+
+  $: if (sameAsKtp) {
+    domisiliAddress = {
+      province: patientData.province,
+      city: patientData.city,
+      district: patientData.district,
+      village: patientData.village,
+      address: patientData.address,
+    };
+  } else {
+    domisiliAddress = { ...oriDomisiliAddress };
+  }
+
+  // $: cities = patientData.province
+  //   ? Object.keys(region[patientData.province] || {})
+  //   : [];
+  // $: districts = patientData.city
+  //   ? Object.keys(region[patientData.city] || {})
+  //   : [];
+  // $: villages = patientData.district
+  //   ? Object.keys(region[patientData.district] || {})
+  //   : [];
+
+  $: cities = patientData.province
+    ? Object.keys(region[patientData.province] || {})
+    : [];
+  $: districts =
+    patientData.province && region[patientData.province] && patientData.city
+      ? Object.keys(region[patientData.province][patientData.city] || {})
+      : [];
+  $: villages =
+    patientData.district &&
+    region[patientData.province] &&
+    region[patientData.province][patientData.city]
+      ? Object.values(
+          region[patientData.province][patientData.city][
+            patientData.district
+          ] || {}
+        )
+      : [];
+
+  let otherFams = [
+    {
+      id: 1,
+      name: "",
+      relation: "Choose option...",
+    },
+    {
+      id: 2,
+      name: "",
+      relation: "Choose option...",
+    },
+  ];
+
+  const addFams = () => {
+    otherFams = [
+      ...otherFams,
+      {
+        id: otherFams.length + 1,
+        name: "",
+        relation: "Choose option...",
+      },
+    ];
+  };
+
+  const removeFams = (id: number) => {
+    otherFams = otherFams.filter((item) => item.id !== id);
+  };
+</script>
+
 <svelte:head>
   <title>Tambahkan Pasien Baru</title>
   <meta name="description" content="Tambah Pasien Baru" />
@@ -40,39 +150,44 @@
           class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           placeholder="Input patient name"
           required
+          bind:value={patientData.name}
         />
       </div>
     </div>
     <div class="flex gap-4 w-full items-center my-4 flex-col md:flex-row">
       <div class="w-full md:w-1/2 flex flex-col md:flex-row items-center">
         <div class="flex-none w-full md:w-48">
-          <label for="name" class="block mb-2 text-sm font-medium text-gray-900"
+          <label
+            for="bornPlace"
+            class="block mb-2 text-sm font-medium text-gray-900"
             >Tempat lahir</label
           >
         </div>
         <div class="w-full md:flex-1">
           <input
             type="text"
-            id="name"
+            id="bornPlace"
             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder="Input DOB Place"
+            placeholder="Input born place"
             required
+            bind:value={patientData.tempatLahir}
           />
         </div>
       </div>
       <div class="w-full md:w-1/2 flex flex-col md:flex-row items-center">
         <div class="flex-none w-full md:w-48">
-          <label for="name" class="block mb-2 text-sm font-medium text-gray-900"
+          <label for="dob" class="block mb-2 text-sm font-medium text-gray-900"
             >Tanggal lahir</label
           >
         </div>
         <div class="w-full md:flex-1">
           <input
             type="date"
-            id="name"
+            id="dob"
             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
             placeholder="Input Date of Birth"
             required
+            bind:value={patientData.dob}
           />
         </div>
       </div>
@@ -83,19 +198,21 @@
     <div class="flex gap-4 w-full items-center my-4 flex-col md:flex-row">
       <div class="w-full md:w-1/2 flex flex-col md:flex-row items-center">
         <div class="flex-none w-full md:w-48">
-          <label for="name" class="block mb-2 text-sm font-medium text-gray-900"
-            >Provinsi</label
+          <label
+            for="address"
+            class="block mb-2 text-sm font-medium text-gray-900">Provinsi</label
           >
         </div>
         <div class="w-full md:flex-1">
           <select
-            id="relation"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            id="province"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            bind:value={patientData.province}
           >
             <option selected disabled>Choose option...</option>
-            <option>Canada</option>
-            <option>France</option>
-            <option>Germany</option>
+            {#each Object.keys(region) as province}
+              <option>{province}</option>
+            {/each}
           </select>
         </div>
       </div>
@@ -107,13 +224,14 @@
         </div>
         <div class="w-full md:flex-1">
           <select
-            id="relation"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            id="city"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            bind:value={patientData.city}
           >
             <option selected disabled>Choose option...</option>
-            <option>Canada</option>
-            <option>France</option>
-            <option>Germany</option>
+            {#each cities as city}
+              <option>{city}</option>
+            {/each}
           </select>
         </div>
       </div>
@@ -127,13 +245,14 @@
         </div>
         <div class="w-full md:flex-1">
           <select
-            id="relation"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            id="district"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            bind:value={patientData.district}
           >
             <option selected disabled>Choose option...</option>
-            <option>Canada</option>
-            <option>France</option>
-            <option>Germany</option>
+            {#each districts as district}
+              <option>{district}</option>
+            {/each}
           </select>
         </div>
       </div>
@@ -145,13 +264,14 @@
         </div>
         <div class="w-full md:flex-1">
           <select
-            id="relation"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            id="village"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            bind:value={patientData.village}
           >
             <option selected disabled>Choose option...</option>
-            <option>Canada</option>
-            <option>France</option>
-            <option>Germany</option>
+            {#each villages as village}
+              <option>{village}</option>
+            {/each}
           </select>
         </div>
       </div>
@@ -168,6 +288,7 @@
           class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           placeholder="Address..."
           required
+          bind:value={patientData.address}
         ></textarea>
       </div>
     </div>
@@ -178,7 +299,12 @@
       <span class="text-sm mr-20 font-medium text-gray-900 dark:text-gray-300"
         >Sama dengan KTP</span
       >
-      <input type="checkbox" value="" class="sr-only peer" />
+      <input
+        type="checkbox"
+        value=""
+        class="sr-only peer"
+        bind:checked={sameAsKtp}
+      />
       <div
         class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
       ></div>
@@ -194,13 +320,14 @@
         </div>
         <div class="w-full md:flex-1">
           <select
-            id="relation"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            id="provinceDomisili"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            bind:value={domisiliAddress.province}
           >
             <option selected disabled>Choose option...</option>
-            <option>Canada</option>
-            <option>France</option>
-            <option>Germany</option>
+            {#each Object.keys(region) as province}
+              <option>{province}</option>
+            {/each}
           </select>
         </div>
       </div>
@@ -212,13 +339,14 @@
         </div>
         <div class="w-full md:flex-1">
           <select
-            id="relation"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            id="cityDomisili"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            bind:value={domisiliAddress.city}
           >
             <option selected disabled>Choose option...</option>
-            <option>Canada</option>
-            <option>France</option>
-            <option>Germany</option>
+            {#each cities as city}
+              <option>{city}</option>
+            {/each}
           </select>
         </div>
       </div>
@@ -233,12 +361,13 @@
         <div class="w-full md:flex-1">
           <select
             id="relation"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            bind:value={domisiliAddress.district}
           >
             <option selected disabled>Choose option...</option>
-            <option>Canada</option>
-            <option>France</option>
-            <option>Germany</option>
+            {#each districts as district}
+              <option>{district}</option>
+            {/each}
           </select>
         </div>
       </div>
@@ -251,12 +380,13 @@
         <div class="w-full md:flex-1">
           <select
             id="relation"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            bind:value={domisiliAddress.village}
           >
             <option selected disabled>Choose option...</option>
-            <option>Canada</option>
-            <option>France</option>
-            <option>Germany</option>
+            {#each villages as village}
+              <option>{village}</option>
+            {/each}
           </select>
         </div>
       </div>
@@ -273,6 +403,7 @@
           class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           placeholder="Address..."
           required
+          bind:value={domisiliAddress.address}
         ></textarea>
       </div>
     </div>
@@ -289,7 +420,8 @@
       <div class="w-full md:flex-1">
         <select
           id="relation"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+          bind:value={patientData.familyRelationship}
         >
           <option selected disabled>Choose option...</option>
           <option>Ayah</option>
@@ -316,6 +448,7 @@
           class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           placeholder="Input patient name"
           required
+          bind:value={patientData.familyName}
         />
       </div>
     </div>
@@ -331,42 +464,83 @@
         <h1>Hubungan</h1>
       </div>
     </div>
-    <div class="w-full flex my-2 gap-2">
-      <div class="flex-none w-14 text-center">
-        <input
-          type="text"
-          id="name"
-          class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          placeholder="1"
-        />
+
+    {#each otherFams as fams}
+      <div class="w-full flex my-2 gap-2">
+        <div class="flex-none w-14 text-center">
+          <input
+            type="text"
+            id="id"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            placeholder="1"
+            bind:value={fams.id}
+          />
+        </div>
+        <div class="flex-1 text-center">
+          <input
+            type="text"
+            id="name"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            placeholder="Family Name"
+            bind:value={fams.name}
+          />
+        </div>
+        <div class="flex-1 text-center">
+          <select
+            id="relation"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            bind:value={fams.relation}
+          >
+            <option selected disabled>Choose option...</option>
+            <option>Ayah</option>
+            <option>Ibu</option>
+            <option>Kakak</option>
+            <option>Adik</option>
+            <option>Kakek</option>
+            <option>Nenek</option>
+            <option>Sepupu</option>
+            <option>Keponakan</option>
+          </select>
+        </div>
+        <div class="flex items-center justify-center mx-4">
+          <button
+            on:click={() => removeFams(fams.id)}
+            class="text-sm font-semibold text-gray-600">X</button
+          >
+        </div>
       </div>
-      <div class="flex-1 text-center">
-        <input
-          type="text"
-          id="name"
-          class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          placeholder="1"
-        />
-      </div>
-      <div class="flex-1 text-center">
-        <select
-          id="relation"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        >
-          <option selected disabled>Choose option...</option>
-          <option>Canada</option>
-          <option>France</option>
-          <option>Germany</option>
-        </select>
-      </div>
-      <div class="flex items-center justify-center mx-4">X</div>
-    </div>
+    {/each}
 
     <button
       type="submit"
-      class="text-white my-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >+ Tambah</button
+      class="text-white my-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+      on:click={addFams}>+ Tambah</button
     >
+
+    <div class="border-b"></div>
+    <div class="flex justify-center items-center gap-10">
+      <button
+        type="submit"
+        class="text-gray-900 my-2 bg-gray-300 hover:bg-gray-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+        >&lt Kembali</button
+      >
+      <button
+        type="submit"
+        class="text-white my-2 bg-cyan-500 hover:bg-cyan-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+        >Cetak Berkas</button
+      >
+      <button
+        type="submit"
+        class="text-white my-2 bg-cyan-500 hover:bg-cyan-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+        >Upload Berkas</button
+      >
+      <button
+        type="submit"
+        class="text-white my-2 bg-blue-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+      >
+        Simpan</button
+      >
+    </div>
   </form>
 
   <!-- </div> -->

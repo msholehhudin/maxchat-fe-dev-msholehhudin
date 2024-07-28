@@ -32,8 +32,7 @@
 
 <button on:click={() => (showModal = true)}> show modal </button>
 
-<Moda
-l bind:showModal>
+<Modal bind:showModal>
   <h2 slot="header">
     modal
     <small><em>adjective</em> mod·al \ˈmō-dəl\</small>

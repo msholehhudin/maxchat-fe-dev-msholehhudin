@@ -527,17 +527,61 @@
       <button
         type="submit"
         class="text-white my-2 bg-cyan-500 hover:bg-cyan-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-        >Cetak Berkas</button
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="w-4 h-4 mr-2 inline-block"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2V9a2 2 0 012-2h16a2 2 0 012 2v7a2 2 0 01-2 2h-2m-6 0v4m0-4H8m4 0h4"
+          />
+        </svg>
+        Cetak Berkas</button
       >
       <button
         type="submit"
         class="text-white my-2 bg-cyan-500 hover:bg-cyan-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-        >Upload Berkas</button
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="w-4 h-4 mr-2 inline-block"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 11l5-5m0 0l5 5m-5-5v12"
+          />
+        </svg>
+        Upload Berkas</button
       >
       <button
         type="submit"
         class="text-white my-2 bg-blue-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
       >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="w-4 h-4 mr-2 inline-block"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M5 13l4 4L19 7"
+          />
+        </svg>
         Simpan</button
       >
     </div>

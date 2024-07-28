@@ -1,13 +1,25 @@
 <script lang="ts">
-  import Modal from "$lib/components/modal/modal.svelte";
+  // import Modal from "$lib/components/modal/modal.svelte";
   import { columns, patients } from "$lib/data/patient";
+  import Modal from "$lib/components/modal/modalSvelte.svelte";
 
-  let showModal = false;
+  $: showModal = false;
+
+  let patientData = {
+    name: "",
+    ktp: "",
+    rm: "",
+  };
+
+  const search = (event: any) => {
+    event.preventDefault();
+    console.log("ini button submit di tekan : ", patientData);
+  };
+
   export let title: string;
 
   const openModal = () => {
     showModal = true;
-    console.log("ini  showModal : ", showModal);
   };
 
   const closeModal = () => {
@@ -91,6 +103,107 @@
   </tbody>
 </table>
 
-<!-- {#if showModal} -->
-<Modal bind:showModal onClose={closeModal} />
-<!-- {/if} -->
+<Modal bind:showModal>
+  <div slot="header" class="flex justify-between">
+    <h2>Pencarian</h2>
+    <button>X</button>
+  </div>
+  <div slot="body">
+    <form class="w-full mx-auto">
+      <div class="flex justify-center items-center my-4 flex-col md:flex-row">
+        <div class="flex-none w-full md:w-48">
+          <label for="name" class="block mb-2 text-sm font-medium text-gray-900"
+            >Nama</label
+          >
+        </div>
+        <div class="w-full md:flex-1">
+          <input
+            type="text"
+            id="name"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            placeholder="Input patient name"
+            required
+            bind:value={patientData.name}
+          />
+        </div>
+      </div>
+      <div class="flex justify-center items-center my-4 flex-col md:flex-row">
+        <div class="flex-none w-full md:w-48">
+          <label for="name" class="block mb-2 text-sm font-medium text-gray-900"
+            >No. KTP</label
+          >
+        </div>
+        <div class="w-full md:flex-1">
+          <input
+            type="text"
+            id="ktp"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            placeholder="Input No. KTP"
+            required
+            bind:value={patientData.ktp}
+          />
+        </div>
+      </div>
+      <div class="flex justify-center items-center my-4 flex-col md:flex-row">
+        <div class="flex-none w-full md:w-48">
+          <label for="name" class="block mb-2 text-sm font-medium text-gray-900"
+            >No. Rekam Medis</label
+          >
+        </div>
+        <div class="w-full md:flex-1">
+          <input
+            type="text"
+            id="rm"
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            placeholder="Input No. Rekam Medis"
+            required
+            bind:value={patientData.rm}
+          />
+        </div>
+      </div>
+    </form>
+  </div>
+  <div slot="footer" class="flex justify-center items-center gap-4">
+    <button
+      type="submit"
+      class="text-white my-2 flex bg-blue-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+      on:click={search}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        class="w-4 h-4 mr-2 inline-block"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M5 13l4 4L19 7"
+        />
+      </svg>
+      OK</button
+    >
+    <button
+      type="button"
+      class="text-gray-900 my-2 bg-gray-300 hover:bg-gray-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+      on:click={closeModal}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        class="w-4 h-4 mr-2 inline-block"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>Tutup</button
+    >
+  </div>
+</Modal>
